@@ -14,17 +14,16 @@ const groupSchema = new Schema({
         type: [Schema.Types.ObjectId]
     },
     puzzlesPackages: {
-        type: [Schema.Types.ObjectId]
+        type: [{
+            packageId: Schema.Types.ObjectId,
+            answers:{
+                moves: [Object],
+                playerId: Schema.Types.ObjectId
+            }
+        }]
     },
     players: {
         type: [Schema.Types.ObjectId]
-    },
-    solutions:{
-        type:{
-            answers: [Object],
-            puzzlesPackage: Schema.Types.ObjectId,
-            player: Schema.Types.ObjectId
-        }
     }
 });
 const Group = mongoose.model('Group', groupSchema, 'Groups');
