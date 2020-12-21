@@ -1,3 +1,5 @@
+const dotenv = require('dotenv');
+dotenv.config();
 require('./src/data/db')
 const Joi = require('joi');
 Joi.ObjectId = require('joi-objectid')(Joi);
@@ -6,9 +8,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const cors = require('cors')
+const cors = require('cors');
+
 
 const accounts = require('./src/routes/accounts');
+const debuts = require('./src/routes/debuts');
 
 app.set('port', 5000);
 app.use(cors({
@@ -23,6 +27,7 @@ app.use(morgan('tiny'));
 app.use(helmet());
 
 app.use('/api/accounts', accounts);
+app.use('/api/debuts', debuts);
 
 let server = app.listen(app.get('port'), () => {
     const port = server.address().port;

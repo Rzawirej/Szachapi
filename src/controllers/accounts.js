@@ -2,7 +2,7 @@ const {
     Account,
     validate
 } = require('../models/account');
-const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
 
@@ -12,12 +12,13 @@ module.exports = {
                 error
             } = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message);
-
+            
             account = new Account(req.body);
             await account.save(function (err, account) {
                 if (err) return console.error(err);
             });
-            res.status(200).send(account);
+            const token = jwt.sign(account.email, process.env.ACCESS_TOKEN_SECRET);
+            res.status(200).send(token);
         } catch (e) {
             console.log(e);
             return res.status(404).send(e);

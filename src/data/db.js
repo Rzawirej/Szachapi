@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Fawn = require("fawn");
 Fawn.init(mongoose);
 
-const dburl = "mongodb+srv://admin:admin123@szachapi.j892v.mongodb.net/SzachApi?retryWrites=true&w=majority";
+const dburl = process.env.DB_URL;
 mongoose.connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -16,3 +16,4 @@ mongoose.connection.on("disconnected", function () {
 mongoose.connection.on("error", function (err) {
     console.log("Mongoose connection error " + err);
 });
+mongoose.set('useFindAndModify', false);
