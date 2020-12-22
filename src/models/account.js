@@ -27,6 +27,9 @@ const accountSchema = new Schema({
         maxlength: 32,
         required: true
     },
+    news: {
+        type: [Schema.Types.ObjectId]
+    },
     debuts: {
         type: [Schema.Types.ObjectId]
     },

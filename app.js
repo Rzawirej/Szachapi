@@ -13,6 +13,7 @@ const cors = require('cors');
 const accounts = require('./src/routes/accounts');
 const debuts = require('./src/routes/debuts');
 const groups = require('./src/routes/groups');
+const news = require('./src/routes/news');
 
 app.set('port', 5000);
 app.use(cors({
@@ -29,6 +30,7 @@ app.use(helmet());
 app.use('/api/accounts', accounts);
 app.use('/api/debuts', debuts);
 app.use('/api/groups', groups);
+app.use('/api/news', news);
 
 let server = app.listen(app.get('port'), () => {
     const port = server.address().port;

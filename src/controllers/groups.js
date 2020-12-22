@@ -40,21 +40,7 @@ module.exports = {
         try {
             account = await Account.findOne({ email: req.userEmail })
             if (account.coachGroups.indexOf(req.params.groupId) == -1)
-                return res.status(404).send('A tag with the given ID was not found');
-            account.coachGroups.pull(req.params.groupId);
-            await account.save();
-            const group = await Group.findOneAndDelete({ _id: req.params.groupId });
-            res.send(group);
-        } catch (e) {
-            res.status(500).send('Error occurred');
-            console.log(e);
-        }
-    },
-    deleteGroup: async function (req, res) {
-        try {
-            account = await Account.findOne({ email: req.userEmail })
-            if (account.coachGroups.indexOf(req.params.groupId) == -1)
-                return res.status(404).send('A tag with the given ID was not found');
+                return res.status(404).send('A group with the given ID was not found');
             account.coachGroups.pull(req.params.groupId);
             await account.save();
             const group = await Group.findOneAndDelete({ _id: req.params.groupId });
