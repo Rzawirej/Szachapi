@@ -33,7 +33,7 @@ const accountSchema = new Schema({
     debuts: {
         type: [Schema.Types.ObjectId]
     },
-    puzzlesPackages: {
+    puzzlePackages: {
         type: [Schema.Types.ObjectId]
     },
     coachGroups: {
