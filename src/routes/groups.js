@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const groupController = require('../controllers/groups');
+const groupsController = require('../controllers/groups');
 const autho = require('../middleware/autho');
 
-router.route('/').post(autho).post(groupController.createGroup);
-router.route('/').get(autho).get(groupController.getCoachGroups);
-router.route('/:groupId').delete(autho).delete(groupController.deleteGroup);
-router.route('/:groupId').put(autho).put(groupController.editGroupName);
-router.route('/assignDebuts/:groupId').put(autho).put(groupController.assignDebut);
+router.route('/').post(autho).post(groupsController.createGroup);
+router.route('/').get(autho).get(groupsController.getCoachGroups);
+router.route('/:groupId').delete(autho).delete(groupsController.deleteGroup);
+router.route('/:groupId').put(autho).put(groupsController.editGroupName);
+router.route('/:groupId').get(autho).get(groupsController.getGroup);
+router.route('/assignDebuts/:groupId').put(autho).put(groupsController.assignDebut);
+router.route('/participants/:groupId').put(autho).put(groupsController.editGroupParticipants);
+router.route('/participants/:groupId').get(autho).get(groupsController.getParticipantsInfo);
 
 module.exports = router;

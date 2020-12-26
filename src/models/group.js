@@ -22,7 +22,7 @@ const groupSchema = new Schema({
             }
         }]
     },
-    players: {
+    participants: {
         type: [Schema.Types.ObjectId]
     }
 });
