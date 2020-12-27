@@ -8,7 +8,9 @@ router.route('/').get(autho).get(groupsController.getCoachGroups);
 router.route('/:groupId').delete(autho).delete(groupsController.deleteGroup);
 router.route('/:groupId').put(autho).put(groupsController.editGroupName);
 router.route('/:groupId').get(autho).get(groupsController.getGroup);
-router.route('/assignDebuts/:groupId').put(autho).put(groupsController.assignDebut);
+router.route('/assign-debut/:groupId').put(autho).put(groupsController.assignDebut);
+router.route('/assign-news/:groupId').put(autho).put(groupsController.assignNews);
+router.route('/assign-puzzle-package/:groupId').put(autho).put(groupsController.assignPuzzlePackage);
 router.route('/participants/:groupId').put(autho).put(groupsController.editGroupParticipants);
 router.route('/participants/:groupId').get(autho).get(groupsController.getParticipantsInfo);
 

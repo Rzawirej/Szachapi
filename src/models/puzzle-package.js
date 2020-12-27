@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
+const Schema = mongoose.Schema;
 
-const puzzlePackageSchema = new mongoose.Schema({
+const puzzlePackageSchema = new Schema({
     name: {
         type: String,
         minlength: 1,
@@ -16,6 +17,12 @@ const puzzlePackageSchema = new mongoose.Schema({
         }],
         required: true
     },
+    answers: {
+        type: [{
+            participant: Schema.Types.ObjectId,
+            answers: [[String]]
+        }],
+    }
 });
 const PuzzlePackage = mongoose.model('PuzzlePackage', puzzlePackageSchema, 'PuzzlePackages');
 

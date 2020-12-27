@@ -13,14 +13,11 @@ const groupSchema = new Schema({
     debuts: {
         type: [Schema.Types.ObjectId]
     },
+    news: {
+        type: [Schema.Types.ObjectId]
+    },
     puzzlesPackages: {
-        type: [{
-            packageId: Schema.Types.ObjectId,
-            answers:{
-                moves: [Object],
-                playerId: Schema.Types.ObjectId
-            }
-        }]
+        type: [Schema.Types.ObjectId]
     },
     participants: {
         type: [Schema.Types.ObjectId]

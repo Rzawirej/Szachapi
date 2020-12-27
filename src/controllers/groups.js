@@ -30,6 +30,38 @@ module.exports = {
                 const group = await Group.findById(account.coachGroups[i]);
                 groups.push(group);
             }
+            const groupsWith = [];
+            const groupsWithout = []
+            if (req.query.newsId) {
+                for (let i = 0; i < groups.length; i++){
+                    if(groups[i].news.includes(req.query.newsId)){
+                        groupsWith.push(groups[i]);
+                    }else{
+                        groupsWithout.push(groups[i]);
+                    }
+                }
+                return res.status(200).send({ groupsWith: groupsWith, groupsWithout: groupsWithout});
+            }
+            if (req.query.debutId) {
+                for (let i = 0; i < groups.length; i++) {
+                    if (groups[i].debuts.includes(req.query.debutId)) {
+                        groupsWith.push(groups[i]);
+                    } else {
+                        groupsWithout.push(groups[i]);
+                    }
+                }
+                return res.status(200).send({ groupsWith: groupsWith, groupsWithout: groupsWithout });
+            }
+            if (req.query.puzzlePackageId) {
+                for (let i = 0; i < groups.length; i++) {
+                    if (groups[i].puzzlesPackages.includes(req.query.puzzlePackageId)) {
+                        groupsWith.push(groups[i]);
+                    } else {
+                        groupsWithout.push(groups[i]);
+                    }
+                }
+                return res.status(200).send({ groupsWith: groupsWith, groupsWithout: groupsWithout });
+            }
             res.status(200).send(groups);
         } catch (ex) {
             return res.status(404).send(ex)
@@ -97,7 +129,6 @@ module.exports = {
     editGroupParticipants: async function (req, res) {
         try {
             let newGroup;
-            console.log(req.body.participant);
             const account = await Account.findOne({ email: req.body.participant })
             if(req.query.isDel === 'true'){
                 newGroup = await Group.findByIdAndUpdate(
@@ -129,15 +160,88 @@ module.exports = {
     },
     assignDebut: async function (req, res) {
         try {
-            const newGroup = await Group.findByIdAndUpdate(
-                req.params.groupId,
-                {
-                    $addToSet: { debuts: [...req.body.debuts] }
-                },
-                {
-                    new: true
-                }
-            );
+            let newGroup;
+            if (req.query.isDel === 'true') {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $pull: { debuts: req.body.debuts }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            } else {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $addToSet: { debuts: [req.body.debuts] }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            }
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    assignNews: async function (req, res) {
+        try {
+            let newGroup;
+            if (req.query.isDel === 'true') {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $pull: { news: req.body.news }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            } else {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $addToSet: { news: [req.body.news] }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            }
+            res.status(200).send(newGroup);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    assignPuzzlePackage: async function (req, res) {
+        try {
+            let newGroup;
+            console.log(req.body.puzzlePackage);
+            if (req.query.isDel === 'true') {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $pull: { puzzlesPackages: req.body.puzzlePackage }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            } else {
+                newGroup = await Group.findByIdAndUpdate(
+                    req.params.groupId,
+                    {
+                        $addToSet: { puzzlesPackages: [req.body.puzzlePackage] }
+                    },
+                    {
+                        new: true
+                    }
+                );
+            }
             res.status(200).send(newGroup);
         } catch (e) {
             console.log(e);
