@@ -165,7 +165,7 @@ module.exports = {
                 newGroup = await Group.findByIdAndUpdate(
                     req.params.groupId,
                     {
-                        $pull: { debuts: req.body.debuts }
+                        $pull: { debuts: req.body.debut }
                     },
                     {
                         new: true
@@ -175,7 +175,7 @@ module.exports = {
                 newGroup = await Group.findByIdAndUpdate(
                     req.params.groupId,
                     {
-                        $addToSet: { debuts: [req.body.debuts] }
+                        $addToSet: { debuts: [req.body.debut] }
                     },
                     {
                         new: true

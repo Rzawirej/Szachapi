@@ -36,5 +36,20 @@ module.exports = {
         } catch (ex) {
             return res.status(404).send(ex)
         }
+    },
+    deleteDebut: async function (req, res) {
+        try {
+            account = await Account.findOne({ email: req.userEmail })
+            console.log(account, req.params.debutId);
+            if (account.debuts.indexOf(req.params.debutId) == -1)
+                return res.status(404).send('A news with the given ID was not found');
+            account.debuts.pull(req.params.debutId);
+            await account.save();
+            const debut = await Debut.findOneAndDelete({ _id: req.params.debutId });
+            res.send(debut);
+        } catch (e) {
+            res.status(500).send('Error occurred');
+            console.log(e);
+        }
     }
 }
