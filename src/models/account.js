@@ -39,7 +39,7 @@ const accountSchema = new Schema({
     coachGroups: {
         type: [Schema.Types.ObjectId]
     },
-    studentGroups: {
+    participantGroups: {
         type: [Schema.Types.ObjectId]
     }
 });

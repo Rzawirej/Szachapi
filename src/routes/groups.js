@@ -5,6 +5,7 @@ const autho = require('../middleware/autho');
 
 router.route('/').post(autho).post(groupsController.createGroup);
 router.route('/').get(autho).get(groupsController.getCoachGroups);
+router.route('/participantGroups').get(autho).get(groupsController.getParticipantGroups);
 router.route('/:groupId').delete(autho).delete(groupsController.deleteGroup);
 router.route('/:groupId').put(autho).put(groupsController.editGroupName);
 router.route('/:groupId').get(autho).get(groupsController.getGroup);

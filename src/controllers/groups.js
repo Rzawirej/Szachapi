@@ -67,6 +67,23 @@ module.exports = {
             return res.status(404).send(ex)
         }
     },
+    getParticipantGroups: async function (req, res) {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+            const account = await Account.findOne({ email: req.userEmail })
+            const groups = [];
+            for (let i = (page - 1) * limit; i < account.participantGroups.length && i < page * limit; i++) {
+                const group = await Group.findById(account.participantGroups[i]);
+                if(group){
+                    groups.push(group);
+                }
+                
+            }
+            res.status(200).send(groups);
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
     getGroup: async function (req, res) {
         try {
             const account = await Account.findOne({ email: req.userEmail })
@@ -140,6 +157,15 @@ module.exports = {
                         new: true
                     }
                 );
+                await Account.findOneAndUpdate(
+                    { 
+                        email: req.body.participant 
+                    }
+                    ,
+                    {
+                        $pull: { participantGroups: req.params.groupId }
+                    }
+                );
             }else{
                 newGroup = await Group.findByIdAndUpdate(
                     req.params.groupId,
@@ -148,6 +174,15 @@ module.exports = {
                     },
                     {
                         new: true
+                    }
+                );
+                await Account.findOneAndUpdate(
+                    {
+                        email: req.body.participant
+                    }
+                    ,
+                    {
+                        $addToSet: { participantGroups: [req.params.groupId] }
                     }
                 );
             }
