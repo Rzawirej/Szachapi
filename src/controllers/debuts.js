@@ -3,6 +3,7 @@ const {
     validate
 } = require('../models/debut');
 const { Account } = require('../models/account');
+const { Group } = require('../models/group');
 
 module.exports = {
 
@@ -23,6 +24,14 @@ module.exports = {
             return res.status(404).send(e);
         }
     },
+    getDebut: async function (req, res) {
+        try {
+            const debut = await Debut.findById(req.params.debutId);
+            res.status(200).send(debut);
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
     getCoachDebuts: async function (req, res) {
         try {
             const {page = 1, limit = 10} = req.query;
@@ -37,10 +46,27 @@ module.exports = {
             return res.status(404).send(ex)
         }
     },
+    getGroupDebuts: async function (req, res) {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+            account = await Account.findOne({ email: req.userEmail })
+            group = await Group.findById(req.params.groupId)
+            if(!group.participants.includes(account._id)){
+                return res.status(403).send('Not participant of group.')
+            }
+            const debuts = [];
+            for (let i = (page - 1) * limit; i < group.debuts.length && i < page * limit; i++) {
+                const debut = await Debut.findById(group.debuts[i]);
+                debuts.push(debut);
+            }
+            res.status(200).send(debuts);
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
     deleteDebut: async function (req, res) {
         try {
             account = await Account.findOne({ email: req.userEmail })
-            console.log(account, req.params.debutId);
             if (account.debuts.indexOf(req.params.debutId) == -1)
                 return res.status(404).send('A news with the given ID was not found');
             account.debuts.pull(req.params.debutId);

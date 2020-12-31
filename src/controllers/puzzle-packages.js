@@ -3,6 +3,7 @@ const {
     validate
 } = require('../models/puzzle-package');
 const { Account } = require('../models/account');
+const { Group } = require('../models/group');
 
 module.exports = {
 
@@ -26,13 +27,30 @@ module.exports = {
             const { page = 1, limit = 10 } = req.query;
             account = await Account.findOne({ email: req.userEmail })
             const puzzlePackages = [];
-            console.log(account.puzzlePackages.length, page, limit);
             for (let i = (page - 1) * limit; i < account.puzzlePackages.length && i < page * limit; i++) {
                 const puzzlePackage = await PuzzlePackage.findById(account.puzzlePackages[i]);
                 if(puzzlePackage){
                     puzzlePackages.push(puzzlePackage);
                 }
                 
+            }
+            res.status(200).send(puzzlePackages);
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
+    getGroupPuzzlePackages: async function (req, res) {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+            account = await Account.findOne({ email: req.userEmail })
+            group = await Group.findById(req.params.groupId)
+            if (!group.participants.includes(account._id)) {
+                return res.status(403).send('Not participant of this group.')
+            }
+            const puzzlePackages = [];
+            for (let i = (page - 1) * limit; i < group.puzzlesPackages.length && i < page * limit; i++) {
+                const puzzlePackage = await PuzzlePackage.findById(group.puzzlesPackages[i]);
+                puzzlePackages.push(puzzlePackage);
             }
             res.status(200).send(puzzlePackages);
         } catch (ex) {
