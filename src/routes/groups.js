@@ -14,5 +14,7 @@ router.route('/assign-news/:groupId').put(autho).put(groupsController.assignNews
 router.route('/assign-puzzle-package/:groupId').put(autho).put(groupsController.assignPuzzlePackage);
 router.route('/participants/:groupId').put(autho).put(groupsController.editGroupParticipants);
 router.route('/participants/:groupId').get(autho).get(groupsController.getParticipantsInfo);
+router.route('/:groupId/answer-puzzle-package/:puzzlePackageId').get(autho).get(groupsController.getAnswersPuzzlePackage);
+router.route('/:groupId/answer-puzzle-package/:puzzlePackageId').put(autho).put(groupsController.answerPuzzlePackage);
 
 module.exports = router;

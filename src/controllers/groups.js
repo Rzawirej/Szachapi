@@ -50,7 +50,7 @@ module.exports = {
                         groupsWithout.push(groups[i]);
                     }
                 }
-                return res.status(200).send({ groupsWith: groupsWith, groupsWithout: groupsWithout });
+                return res.status(200).send({ groupsWith: groupsWith.reverse(), groupsWithout: groupsWithout.reverse() });
             }
             if (req.query.puzzlePackageId) {
                 for (let i = 0; i < groups.length; i++) {
@@ -60,9 +60,9 @@ module.exports = {
                         groupsWithout.push(groups[i]);
                     }
                 }
-                return res.status(200).send({ groupsWith: groupsWith, groupsWithout: groupsWithout });
+                return res.status(200).send({ groupsWith: groupsWith.reverse(), groupsWithout: groupsWithout.reverse() });
             }
-            res.status(200).send(groups);
+            res.status(200).send(groups.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
@@ -79,7 +79,7 @@ module.exports = {
                 }
                 
             }
-            res.status(200).send(groups);
+            res.status(200).send(groups.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
@@ -255,7 +255,6 @@ module.exports = {
     assignPuzzlePackage: async function (req, res) {
         try {
             let newGroup;
-            console.log(req.body.puzzlePackage);
             if (req.query.isDel === 'true') {
                 newGroup = await Group.findByIdAndUpdate(
                     req.params.groupId,
@@ -278,6 +277,55 @@ module.exports = {
                 );
             }
             res.status(200).send(newGroup);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    getAnswersPuzzlePackage: async function (req, res) {
+        try {
+            const group = await Group.findById(req.params.groupId);
+            const account = await Account.findOne({ email: req.userEmail });
+            const indexOfAnswer = group.answers.findIndex((element) => {
+                return element.puzzlePackage == req.params.puzzlePackageId && element.participant == account._id.toString();
+            });
+            if(indexOfAnswer === -1){
+                return res.status(200).send([]);
+            }
+            res.status(200).send(group.answers[indexOfAnswer].solutions);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    answerPuzzlePackage: async function (req, res) {
+        try {
+            const group = await Group.findById(req.params.groupId);
+            const account = await Account.findOne({ email: req.userEmail });
+            const indexOfAnswer = group.answers.findIndex((element) => {
+                return element.puzzlePackage == req.params.puzzlePackageId && element.participant == account._id.toString();
+            });
+
+            if(indexOfAnswer === -1){
+                if (req.body.puzzleNumber === 0){
+                    const answerObject = {
+                        puzzlePackage: req.params.puzzlePackageId,
+                        participant: account._id,
+                        solutions: [req.body.answer]
+                    }
+                    group.answers.push(answerObject);
+                    await group.save();
+                    return res.status(200).send(answerObject);
+                }
+            }else{
+                const solutions = group.answers[indexOfAnswer].solutions;
+                if (solutions.length === req.body.puzzleNumber){
+                    solutions.push(req.body.answer);
+                    await group.save();
+                    return res.status(200).send(solutions);
+                }
+            }
+            res.status(409).send('Bad puzzle number');
         } catch (e) {
             console.log(e);
             return res.status(404).send(e);

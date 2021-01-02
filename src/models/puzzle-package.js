@@ -16,12 +16,6 @@ const puzzlePackageSchema = new Schema({
             answer: [String] 
         }],
         required: true
-    },
-    answers: {
-        type: [{
-            participant: Schema.Types.ObjectId,
-            answers: [[String]]
-        }],
     }
 });
 const PuzzlePackage = mongoose.model('PuzzlePackage', puzzlePackageSchema, 'PuzzlePackages');
@@ -29,7 +23,7 @@ const PuzzlePackage = mongoose.model('PuzzlePackage', puzzlePackageSchema, 'Puzz
 function validatePuzzlePackage(puzzlePackage) {
     const schema = Joi.object({
         name: Joi.string().min(1).max(32).required(),
-        puzzles: Joi.array(),
+        puzzles: Joi.array()
     })
     return schema.validate(puzzlePackage);
 }

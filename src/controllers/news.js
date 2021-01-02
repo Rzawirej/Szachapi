@@ -29,7 +29,7 @@ module.exports = {
                 const oneNews = await News.findById(account.news[i]);
                 news.push(oneNews);
             }
-            res.status(200).send(news);
+            res.status(200).send(news.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
@@ -47,7 +47,7 @@ module.exports = {
                 const oneNews = await News.findById(group.news[i]);
                 news.push(oneNews);
             }
-            res.status(200).send(news);
+            res.status(200).send(news.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }

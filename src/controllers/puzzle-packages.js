@@ -22,6 +22,14 @@ module.exports = {
             return res.status(404).send(e);
         }
     },
+    getPuzzlePackage: async function (req, res) {
+        try {
+            const puzzlePackage = await PuzzlePackage.findById(req.params.puzzlePackageId);
+            res.status(200).send(puzzlePackage);
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
     getPuzzlePackages: async function (req, res) {
         try {
             const { page = 1, limit = 10 } = req.query;
@@ -34,12 +42,12 @@ module.exports = {
                 }
                 
             }
-            res.status(200).send(puzzlePackages);
+            res.status(200).send(puzzlePackages.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
     },
-    getGroupPuzzlePackages: async function (req, res) {
+    getParticipantPuzzlePackages: async function (req, res) {
         try {
             const { page = 1, limit = 10 } = req.query;
             account = await Account.findOne({ email: req.userEmail })
@@ -49,11 +57,17 @@ module.exports = {
             }
             const puzzlePackages = [];
             for (let i = (page - 1) * limit; i < group.puzzlesPackages.length && i < page * limit; i++) {
-                const puzzlePackage = await PuzzlePackage.findById(group.puzzlesPackages[i]);
-                puzzlePackages.push(puzzlePackage);
+                const indexOfAnswer = group.answers.findIndex((element) => {
+                    return element.puzzlePackage == group.puzzlesPackages[i]._id.toString() && element.participant == account._id.toString();
+                });
+                if (indexOfAnswer === -1 || group.answers[indexOfAnswer].solutions.length < group.puzzlesPackages[i].length){
+                    const puzzlePackage = await PuzzlePackage.findById(group.puzzlesPackages[i]);
+                    puzzlePackages.push(puzzlePackage);
+                }
             }
-            res.status(200).send(puzzlePackages);
+            res.status(200).send(puzzlePackages.reverse());
         } catch (ex) {
+            console.log(ex);
             return res.status(404).send(ex)
         }
     },

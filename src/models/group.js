@@ -21,6 +21,13 @@ const groupSchema = new Schema({
     },
     participants: {
         type: [Schema.Types.ObjectId]
+    },
+    answers: {
+        type: [{
+            puzzlePackage: Schema.Types.ObjectId,
+            participant: Schema.Types.ObjectId,
+            solutions: [[String]]  
+        }]
     }
 });
 const Group = mongoose.model('Group', groupSchema, 'Groups');

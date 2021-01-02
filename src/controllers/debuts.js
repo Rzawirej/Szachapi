@@ -41,7 +41,7 @@ module.exports = {
                 const debut = await Debut.findById(account.debuts[i]);
                 debuts.push(debut);
             }
-            res.status(200).send(debuts);
+            res.status(200).send(debuts.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
@@ -59,7 +59,7 @@ module.exports = {
                 const debut = await Debut.findById(group.debuts[i]);
                 debuts.push(debut);
             }
-            res.status(200).send(debuts);
+            res.status(200).send(debuts.reverse());
         } catch (ex) {
             return res.status(404).send(ex)
         }
