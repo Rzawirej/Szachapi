@@ -3,6 +3,7 @@ const {
     validate
 } = require('../models/group');
 const { Account } = require('../models/account');
+const { PuzzlePackage } = require('../models/puzzle-package');
 
 module.exports = {
 
@@ -115,6 +116,25 @@ module.exports = {
             return res.status(404).send(ex)
         }
     },
+    getGroupPuzzlePackages: async function (req, res) {
+        try {
+            const account = await Account.findOne({ email: req.userEmail })
+            if (!account.coachGroups.includes(req.params.groupId)) {
+                return res.status(403).send("You are not coach of that group.")
+            }
+            const group = await Group.findById(req.params.groupId).select({ name: 1, puzzlesPackages: 1 });
+            const puzzlePackages = [];
+            for (let i = 0; i < group.puzzlesPackages.length; i++) {
+                const puzzlePackage = await PuzzlePackage.findById(group.puzzlesPackages[i]);
+                if (puzzlePackage) {
+                    puzzlePackages.push(puzzlePackage);
+                }
+            }
+            res.status(200).send({ groupName: group.name, puzzlePackages: puzzlePackages });
+        } catch (ex) {
+            return res.status(404).send(ex)
+        }
+    },
     deleteGroup: async function (req, res) {
         try {
             const account = await Account.findOne({ email: req.userEmail })
@@ -191,6 +211,31 @@ module.exports = {
         } catch (e) {
             console.log(e);
             return res.status(404).send(e);
+        }
+    },
+    leaveGroup: async function (req, res) {
+        try {
+            const account = await Account.findOne({ email: req.userEmail })
+            const group = await Group.findById(req.params.groupId);
+            const indexOfParticipant = group.participants.findIndex((participant) => {
+                return participant == account._id.toString();
+            });
+            const indexOfGroup = account.participantGroups.findIndex((group) => {
+                return group == req.params.groupId;
+            });
+            console.log(indexOfParticipant, indexOfGroup);
+            if (indexOfParticipant !== -1 && indexOfGroup !== -1){
+                group.participants.splice(indexOfParticipant, 1);
+                account.participantGroups.splice(indexOfGroup, 1);
+            }else{
+                return res.status(403).send("You are not participant of that group.")
+            }
+            group.save(); 
+            account.save();        
+            res.status(200).send(account);
+        } catch (ex) {
+            console.log(ex);
+            return res.status(404).send(ex)
         }
     },
     assignDebut: async function (req, res) {
@@ -282,7 +327,7 @@ module.exports = {
             return res.status(404).send(e);
         }
     },
-    getAnswersPuzzlePackage: async function (req, res) {
+    getAnswersParticipant: async function (req, res) {
         try {
             const group = await Group.findById(req.params.groupId);
             const account = await Account.findOne({ email: req.userEmail });
@@ -293,6 +338,32 @@ module.exports = {
                 return res.status(200).send([]);
             }
             res.status(200).send(group.answers[indexOfAnswer].solutions);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    getAnswersPuzzlePackage: async function (req, res) {
+        try {
+            const group = await Group.findById(req.params.groupId);
+            const answers = group.answers.filter((element) => {
+                console.log(element.puzzlePackage, req.params.puzzlePackageId);
+                return element.puzzlePackage == req.params.puzzlePackageId;
+            });
+            res.status(200).send(answers);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).send(e);
+        }
+    },
+    getParticipantAnswers: async function (req, res) {
+        try {
+            const group = await Group.findById(req.params.groupId);
+            const account = await Account.findById(req.params.participantId);
+            const participantAnswers = group.answers.filter((answer) => {
+                return answer.participant == req.params.participantId
+            });
+            res.status(200).send({ participant: account.name + ' ' + account.surname, answers: participantAnswers });
         } catch (e) {
             console.log(e);
             return res.status(404).send(e);

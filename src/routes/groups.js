@@ -9,11 +9,15 @@ router.route('/participantGroups').get(autho).get(groupsController.getParticipan
 router.route('/:groupId').delete(autho).delete(groupsController.deleteGroup);
 router.route('/:groupId').put(autho).put(groupsController.editGroupName);
 router.route('/:groupId').get(autho).get(groupsController.getGroup);
+router.route('/leave/:groupId').put(autho).put(groupsController.leaveGroup);
 router.route('/assign-debut/:groupId').put(autho).put(groupsController.assignDebut);
 router.route('/assign-news/:groupId').put(autho).put(groupsController.assignNews);
 router.route('/assign-puzzle-package/:groupId').put(autho).put(groupsController.assignPuzzlePackage);
 router.route('/participants/:groupId').put(autho).put(groupsController.editGroupParticipants);
 router.route('/participants/:groupId').get(autho).get(groupsController.getParticipantsInfo);
+router.route('/puzzlePackages/:groupId').get(autho).get(groupsController.getGroupPuzzlePackages);
+router.route('/participants/:groupId/answers/:participantId').get(autho).get(groupsController.getParticipantAnswers);
+router.route('/:groupId/answer-participant/:puzzlePackageId').get(autho).get(groupsController.getAnswersParticipant);
 router.route('/:groupId/answer-puzzle-package/:puzzlePackageId').get(autho).get(groupsController.getAnswersPuzzlePackage);
 router.route('/:groupId/answer-puzzle-package/:puzzlePackageId').put(autho).put(groupsController.answerPuzzlePackage);
 

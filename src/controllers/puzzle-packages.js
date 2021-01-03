@@ -49,10 +49,11 @@ module.exports = {
     },
     getParticipantPuzzlePackages: async function (req, res) {
         try {
+            console.log(1);
             const { page = 1, limit = 10 } = req.query;
             account = await Account.findOne({ email: req.userEmail })
             group = await Group.findById(req.params.groupId)
-            if (!group.participants.includes(account._id)) {
+            if (!group.participants.includes(account._id) && !account.coachGroups.includes(req.params.groupId)) {
                 return res.status(403).send('Not participant of this group.')
             }
             const puzzlePackages = [];
