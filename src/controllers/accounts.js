@@ -8,15 +8,25 @@ module.exports = {
 
     createAccount: async function (req, res) {
         try {
-            const { error } = validate(req.body);
-            if (error) return res.status(400).send(error.details[0].message);
+            const { bodyError } = validate(req.body);
+            if (bodyError) return res.status(400).send(error.details[0].message);
             
             account = new Account(req.body);
-            await account.save(function (err, account) {
-                if (err) return console.error(err);
-            });
+            const databaseError = await account.save().catch(err => err);
+            if (databaseError.name === 'MongoError'){
+                if (databaseError.code === 11000){
+                    return res.status(403).send('EmailExists');
+                }
+                return res.status(403).send('MongoError');
+            }
+            if(databaseError.errors){
+                if(databaseError.errors.email){
+                    return res.status(403).send('NotEmail');
+                }
+                
+            }
             const token = jwt.sign(account.email, process.env.ACCESS_TOKEN_SECRET);
-            res.status(200).send(token);
+            res.status(200).send({token, nameSurname: account.name+' '+account.surname});
         } catch (e) {
             console.log(e);
             return res.status(404).send(e);
@@ -31,7 +41,7 @@ module.exports = {
                 return res.status(404).send('Invalid email or password.')
             }
             const token = jwt.sign(account.email, process.env.ACCESS_TOKEN_SECRET);
-            res.status(200).send({token});
+            res.status(200).send({token, nameSurname: account.name+' '+account.surname});
         } catch (ex) {
             console.log(ex);
             return res.status(404).send(ex)

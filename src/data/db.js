@@ -17,3 +17,4 @@ mongoose.connection.on("error", function (err) {
     console.log("Mongoose connection error " + err);
 });
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
