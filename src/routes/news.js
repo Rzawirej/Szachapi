@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const newsController = require('../controllers/news');
-const autho = require('../middleware/autho');
+const auth = require('../middleware/auth');
 
-router.route('/').post(autho).post(newsController.createNews);
-router.route('/').get(autho).get(newsController.getCoachNews);
-router.route('/:newsId').delete(autho).delete(newsController.deleteNews);
-router.route('/group/:groupId').get(autho).get(newsController.getGroupNews);
+router.route('/').post(auth).post(newsController.createNews);
+router.route('/').get(auth).get(newsController.getCoachNews);
+router.route('/:newsId').delete(auth).delete(newsController.deleteNews);
+router.route('/group/:groupId').get(auth).get(newsController.getGroupNews);
 
 module.exports = router;
