@@ -61,6 +61,10 @@ module.exports = {
                 const indexOfAnswer = group.answers.findIndex((element) => {
                     return element.puzzlePackage == group.puzzlesPackages[i]._id.toString() && element.participant == account._id.toString();
                 });
+                if(indexOfAnswer !== -1){
+                    console.log(group.answers[indexOfAnswer].solutions.length, group.puzzlesPackages[i].length);
+                }
+                
                 if (indexOfAnswer === -1 || group.answers[indexOfAnswer].solutions.length < group.puzzlesPackages[i].length){
                     const puzzlePackage = await PuzzlePackage.findById(group.puzzlesPackages[i]);
                     puzzlePackages.push(puzzlePackage);

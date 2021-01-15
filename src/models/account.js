@@ -24,8 +24,6 @@ const accountSchema = new Schema({
     },
     password: {
         type: String,
-        minlength: 8,
-        maxlength: 32,
         required: true
     },
     news: {
